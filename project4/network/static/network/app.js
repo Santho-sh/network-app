@@ -75,15 +75,17 @@ function view_post(type) {
             likes.classList.add('post-likes');
             likes.innerHTML = post.likes;
 
-            // const comment = document.createElement('p');
-            // comment.classList.add('post-comment');
-            // comment.innerHTML = post.comment;
+            // TODO
+            const comment = document.createElement('p');
+            comment.classList.add('post-comment');
+            comment.innerHTML = 'comment';
 
             post_div.appendChild(author);
             post_div.appendChild(edit);
             post_div.appendChild(content);
             post_div.appendChild(timestamp);
             post_div.appendChild(likes);
+            post_div.appendChild(comment);
 
             all_posts.appendChild(post_div)
         })
