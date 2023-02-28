@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Profile, Post, Comment
 
@@ -15,20 +16,23 @@ def index(request):
         return render(request, "network/index.html")
     else:
         return redirect('/login')
-
+    
+    
+@csrf_exempt
 @login_required
 def create_post(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
-    data =json.loads(request.body)
+    data = json.loads(request.body)
     content = data.get("content", "")
     post = Post.objects.create(author=request.user, content=content)
     post.save()
-    
+
     return JsonResponse({"message": "Post created successfully."}, status=201)
 
 
+@csrf_exempt
 @login_required
 def get_posts(request, required):
     if required == 'all':
@@ -39,6 +43,7 @@ def get_posts(request, required):
         return JsonResponse({"error": "Invalid mailbox."}, status=400)
     
     posts = posts.order_by("-timestamp").all()
+    
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
 
