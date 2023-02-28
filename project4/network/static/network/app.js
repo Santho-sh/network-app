@@ -15,8 +15,6 @@ function create_post() {
 
     let content = document.querySelector('.post-content').value;
 
-    console.log(content);
-
     fetch('/posts', {
         method: 'POST',
         body: JSON.stringify({
@@ -46,11 +44,48 @@ function view_post(type) {
         heading.innerHTML = 'My Posts';
     }
 
-    fetch(`/posts/all`)
+    const all_posts = document.querySelector('#posts');
+
+    fetch(`/posts/${type}`)
     .then(response => response.json())
     .then(posts => { 
         posts.forEach(post => {
-            console.log(post)
+            
+            const post_div = document.createElement('div');
+            post_div.classList.add('post');
+
+            const author = document.createElement('p');
+            author.classList.add('post-author');
+            author.innerHTML = post.author;
+
+            const edit = document.createElement('a');
+            edit.innerHTML = 'Edit';
+            edit.href = '#';
+            edit.classList.add('post-edit');
+
+            const content = document.createElement('p');
+            content.classList.add('post-content');
+            content.innerHTML = post.content;
+
+            const timestamp = document.createElement('p');
+            timestamp.classList.add('post-timesatmp');
+            timestamp.innerHTML = post.timestamp;
+
+            const likes = document.createElement('p');
+            likes.classList.add('post-likes');
+            likes.innerHTML = post.likes;
+
+            // const comment = document.createElement('p');
+            // comment.classList.add('post-comment');
+            // comment.innerHTML = post.comment;
+
+            post_div.appendChild(author);
+            post_div.appendChild(edit);
+            post_div.appendChild(content);
+            post_div.appendChild(timestamp);
+            post_div.appendChild(likes);
+
+            all_posts.appendChild(post_div)
         })
     })
 }

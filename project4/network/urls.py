@@ -11,5 +11,5 @@ urlpatterns = [
     
     # API Routes
     path("posts", views.create_post, name="create"),
-    path("posts/<str:mailbox>", views.get_posts, name = "posts"),
+    path("posts/<str:required>", views.get_posts, name = "posts"),
 ]

@@ -14,6 +14,15 @@ class Post(models.Model):
 
     def __str__(self):
         return self.content
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "author": self.author.username,
+            "content": self.content,
+            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
+            "likes": self.likes.count()
+        }
 
 
 class Profile(models.Model):

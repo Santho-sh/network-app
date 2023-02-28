@@ -40,7 +40,7 @@ def get_posts(request, required):
     elif required == 'profile':
         posts = Post.objects.filter(author=request.user)
     else:
-        return JsonResponse({"error": "Invalid mailbox."}, status=400)
+        return JsonResponse({"error": "Invalid Request."}, status=400)
     
     posts = posts.order_by("-timestamp").all()
     
