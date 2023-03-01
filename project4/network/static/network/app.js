@@ -68,7 +68,7 @@ function view_post(type) {
             content.innerHTML = post.content;
 
             const timestamp = document.createElement('p');
-            timestamp.classList.add('post-timesatmp');
+            timestamp.classList.add('post-timestamp');
             timestamp.innerHTML = post.timestamp;
 
             const likes = document.createElement('p');

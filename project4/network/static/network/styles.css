@@ -2,14 +2,46 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.body {
+    margin-inline: 2rem;
 }
 
 .navbar {
     display: flex;
+    gap: 1.5rem;
 }
 
 .navbar-nav {
     display: flex;
     flex-direction: row;
     gap: 1.5rem;
+}
+
+/* Posts */
+
+.post {
+    border: 1px solid grey;
+    display: block;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.post p {
+    margin: 0;
+}
+
+.post-author {
+    font-weight: 600;
+    padding-bottom: 10px;
+}
+
+.post-edit {
+    font-size: ;
+}
+
+.post-timestamp {
+    color: grey;
 }
