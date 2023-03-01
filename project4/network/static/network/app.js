@@ -31,20 +31,23 @@ function create_post() {
 
 function view_post(type) {
 
-    document.querySelector('#posts').style.display = 'block';
-    document.querySelector('#profile').style.display = 'none';
-    document.querySelector('#followers').style.display = 'none';
-
-    const heading = document.querySelector('.page-heading');
+    let all_posts = null
 
     if (type === 'all'){
-        heading.innerHTML = 'All Posts';
-    }
-    else if (type === 'profile') {
-        heading.innerHTML = 'My Posts';
-    }
 
-    const all_posts = document.querySelector('#posts');
+        document.querySelector('#posts').style.display = 'block';
+        document.querySelector('#profile').style.display = 'none';
+        document.querySelector('#followers').style.display = 'none';
+
+        const heading = document.querySelector('.page-heading');
+        heading.innerHTML = 'All Posts';
+
+        all_posts = document.querySelector('#posts');
+
+    } else if (type === 'profile') {
+        all_posts = document.querySelector('#profile-posts');
+        all_posts.innerHTML='';
+    }
 
     fetch(`/posts/${type}`)
     .then(response => response.json())
@@ -93,7 +96,7 @@ function view_post(type) {
             post_div.appendChild(likes);
             post_div.appendChild(comment);
 
-            all_posts.appendChild(post_div)
+            all_posts.appendChild(post_div);
         })
     })
 }
@@ -126,4 +129,6 @@ function view_profile() {
         followers.innerHTML = `<b>Followers:</b> ${data.followers}`;
         following.innerHTML = `<b>Following:</b> ${data.following}`;
     })
+
+    view_post('profile')
 }
