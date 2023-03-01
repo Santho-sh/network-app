@@ -167,7 +167,7 @@ function view_profile(id) {
 
         if (id !== user_id) {
             const button = document.createElement('button');
-            button.classList.add('btn', 'btn-primary')
+            button.classList.add('btn', 'btn-primary', 'btn-sm')
             if (data.follow){
                 button.classList.add('follow_button')
                 button.textContent = 'Unfollow';
