@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector('.all-posts').addEventListener('click', () => view_post('all'));
     document.querySelector('.following').addEventListener('click', () => view_follow('following'));
-    document.querySelector('.profile').addEventListener('click', () => view_profile());
+    document.querySelector('.profile').addEventListener('click', () => view_profile(1));
     document.querySelector('#create-post').addEventListener('submit', create_post);
 
     // By default, load the All Posts
@@ -103,6 +103,7 @@ function view_post(type) {
 
 
 function view_follow(type) {
+
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#followers').style.display = 'block';
@@ -127,21 +128,37 @@ function view_follow(type) {
 }
 
 
-function view_profile() {
+function view_profile(id) {
+
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'block';
     document.querySelector('#followers').style.display = 'none';
 
+    // current user id
+    const user_id = JSON.parse(document.getElementById('user_id').textContent);
+
     const heading = document.querySelector('.page-heading');
     const followers = document.querySelector('.profile-followers');
-    const following = document.querySelector('.profile-following')
+    const following = document.querySelector('.profile-following');
+    const button = document.querySelector('.profile-button');
+    button.innerHTML = '';
 
-    fetch(`/profile`)
+    fetch(`/profile/${id}`)
     .then(response => response.json())
     .then(data => { 
         heading.innerHTML = data.name;
-        followers.innerHTML = `<b>Followers:</b> ${data.followers}`;
-        following.innerHTML = `<b>Following:</b> ${data.following}`;
+        followers.innerHTML = `<b>Followers:</b> ${data.followers_count}`;
+        following.innerHTML = `<b>Following:</b> ${data.following_count}`;
+
+        if (id !== user_id) {
+            const follow = document.createElement('button');
+            if (data.follow){
+                follow.textContent = 'Unfollow';
+            } else {
+                follow.textContent = 'Follow';
+            }
+            button.appendChild(follow);
+        }
     })
 
     view_post('profile')

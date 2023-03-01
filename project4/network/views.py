@@ -54,14 +54,22 @@ def get_posts(request, required):
     return JsonResponse(serialized_posts, safe=False)
 
 
-def profile(request):
+def profile(request, id):
     
-    profile = Profile.objects.get(user=request.user)
-    name = request.user.username
+    profile = Profile.objects.get(user=id)
+    name = profile.user.username
     followers_count = profile.followers.count()
     following_count = profile.following.count()
     
-    return JsonResponse({'name':name, 'followers':followers_count,'following':following_count}, safe=False)
+    if request.user in profile.followers.all():
+        follow = True
+    else:
+        follow = False
+        
+    return JsonResponse({'name':name,
+                         'followers_count':followers_count,'following_count':following_count,
+                         'follow':follow,
+                         }, safe=False)
 
 
 def profile_followers(request):
