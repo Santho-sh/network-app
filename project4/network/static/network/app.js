@@ -35,7 +35,7 @@ function view_post(type) {
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#followers').style.display = 'none';
 
-    const heading = document.querySelector('.post-heading');
+    const heading = document.querySelector('.page-heading');
 
     if (type === 'all'){
         heading.innerHTML = 'All Posts';
@@ -104,6 +104,9 @@ function view_following() {
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#followers').style.display = 'block';
 
+    const heading = document.querySelector('.page-heading');
+    heading.innerHTML = 'Following';
+
 }
 
 
@@ -112,4 +115,15 @@ function view_profile() {
     document.querySelector('#profile').style.display = 'block';
     document.querySelector('#followers').style.display = 'none';
 
+    const heading = document.querySelector('.page-heading');
+    const followers = document.querySelector('.profile-followers');
+    const following = document.querySelector('.profile-following')
+
+    fetch(`/profile`)
+    .then(response => response.json())
+    .then(data => { 
+        heading.innerHTML = data.name;
+        followers.innerHTML = `<b>Followers:</b> ${data.followers}`;
+        following.innerHTML = `<b>Following:</b> ${data.following}`;
+    })
 }
