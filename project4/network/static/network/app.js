@@ -1,8 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Current users id
+    const user_id = JSON.parse(document.getElementById('user_id').textContent);
 
+    // Actions
     document.querySelector('.all-posts').addEventListener('click', () => view_post('all'));
     document.querySelector('.following').addEventListener('click', () => view_follow('following'));
-    document.querySelector('.profile').addEventListener('click', () => view_profile(1));
+    document.querySelector('.profile').addEventListener('click', () => view_profile(user_id));
     document.querySelector('#create-post').addEventListener('submit', create_post);
 
     // By default, load the All Posts
@@ -30,6 +33,8 @@ function create_post() {
 
 
 function view_post(type) {
+
+    // type == all or profile
 
     let all_posts = null
 
@@ -104,6 +109,8 @@ function view_post(type) {
 
 function view_follow(type) {
 
+    // type = followers or following
+
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#followers').style.display = 'block';
@@ -114,7 +121,7 @@ function view_follow(type) {
     const followers = document.querySelector('#followers')
     followers.innerHTML = '';
 
-    fetch(`/profile/followers`)
+    fetch(`/profile/${type}`)
     .then(response => response.json())
     .then(users => {
         users.forEach(user => {

@@ -54,8 +54,8 @@ def get_posts(request, required):
     return JsonResponse(serialized_posts, safe=False)
 
 
+@login_required
 def profile(request, id):
-    
     profile = Profile.objects.get(user=id)
     name = profile.user.username
     followers_count = profile.followers.count()
@@ -71,16 +71,21 @@ def profile(request, id):
                          'follow':follow,
                          }, safe=False)
 
-
-def profile_followers(request):
+@login_required
+def profile_follows(request, users):
     profile = Profile.objects.get(user=request.user)
-    followers = profile.followers.all()
-
+    if users == 'followers':
+        users = profile.followers.all()
+    elif users == 'following':
+        users = profile.following.all()    
+    else:
+        return JsonResponse({"error": "Invalid Request."}, status=400)
+    
     all = []
-    for follower in followers:
+    for user in users:
         user = {
-            'id':follower.id,
-            'name':follower.username
+            'id':user.id,
+            'name':user.username
         }
         all.append(user)
     
