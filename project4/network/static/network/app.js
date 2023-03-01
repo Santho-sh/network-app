@@ -73,7 +73,13 @@ function view_post(type) {
 
             const likes = document.createElement('p');
             likes.classList.add('post-likes');
-            likes.innerHTML = post.likes;
+            if (post.liked === true) {
+                likes.innerHTML = `Liked ${post.likes}`;
+            }
+            else {
+                likes.innerHTML = `NotLiked ${post.likes}`;
+            }
+
 
             // TODO
             const comment = document.createElement('p');

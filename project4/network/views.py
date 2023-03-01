@@ -44,7 +44,15 @@ def get_posts(request, required):
     
     posts = posts.order_by("-timestamp").all()
     
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+    serialized_posts = []
+    for post in posts:
+        if post is not None:
+            serialized_post = post.serialize()
+            serialized_post['liked'] = post.liked(request.user)
+            serialized_posts.append(serialized_post)
+    
+    return JsonResponse(serialized_posts, safe=False)
+
 
 
 
