@@ -143,7 +143,6 @@ function unfollow(id) {
 
 
 function view_profile(id) {
-    id = 2
 
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'block';
@@ -167,12 +166,12 @@ function view_profile(id) {
 
         if (id !== user_id) {
             const button = document.createElement('button');
-            button.classList.add('btn', 'btn-primary', 'btn-sm')
+            button.classList.add('btn', 'btn-primary', 'btn-sm');
             if (data.follow){
-                button.classList.add('follow_button')
+                button.classList.add('follow_button');
                 button.textContent = 'Unfollow';
             } else {
-                button.classList.add('unfollow_button')
+                button.classList.add('unfollow_button');
                 button.textContent = 'Follow';
             }
             profile_button.appendChild(button);
@@ -180,23 +179,38 @@ function view_profile(id) {
             // Follow and Unfollow button
             button.addEventListener('click', function() {
                 if (data.follow) {
-                    unfollow(id);
+
+                    fetch(`/profile/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            action: 'unfollow'
+                        })
+                    })
+
                     button.classList.remove('follow_button');
                     button.classList.add('unfollow_button');
                     button.textContent = 'Follow';
                     data.follow = false;
+                    location.reload()
+
                 } else {
-                    follow(id);
+
+                    fetch(`/profile/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            action: 'follow'
+                        })
+                    })
+
                     button.classList.remove('unfollow_button');
                     button.classList.add('follow_button');
                     button.textContent = 'Unfollow';
                     data.follow = true;
+                    location.reload()
                 }
             });
 
             view_post('profile');
         }
     })
-
-    
 }

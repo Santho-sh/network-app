@@ -53,10 +53,14 @@ def get_posts(request, required):
     
     return JsonResponse(serialized_posts, safe=False)
 
-
+@csrf_exempt
 @login_required
 def profile(request, id):
-    profile = Profile.objects.get(user=id)
+    try:
+        profile = Profile.objects.get(user=id)
+    except Profile.DoesNotExist:
+        return JsonResponse({"error": "Profile not found."}, status=404)
+    
     name = profile.user.username
     followers_count = profile.followers.count()
     following_count = profile.following.count()
@@ -66,10 +70,30 @@ def profile(request, id):
     else:
         follow = False
         
-    return JsonResponse({'name':name,
-                         'followers_count':followers_count,'following_count':following_count,
-                         'follow':follow,
-                         }, safe=False)
+    if request.method == "GET":
+        return JsonResponse({'name':name,
+                            'followers_count':followers_count,'following_count':following_count,
+                            'follow':follow,
+                            }, safe=False)
+    
+    elif request.method == "PUT":
+        
+        cur_user = Profile.objects.get(user=request.user)
+        
+        data = json.loads(request.body)
+        
+        if data.get("action") is not None:
+            profile_user = User.objects.get(pk=id)
+            
+            if data['action'] == 'follow':
+                cur_user.following.add(profile_user)
+                profile.followers.add(request.user)
+            elif data['action'] == 'unfollow':
+                cur_user.following.remove(profile_user)
+                profile.followers.remove(request.user)
+
+        return HttpResponse(status=204)
+
 
 @login_required
 def profile_follows(request, users):
