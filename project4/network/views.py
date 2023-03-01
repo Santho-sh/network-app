@@ -91,8 +91,13 @@ def profile(request, id):
             elif data['action'] == 'unfollow':
                 cur_user.following.remove(profile_user)
                 profile.followers.remove(request.user)
+                
+        followers_count = profile.followers.count()
+        following_count = profile.following.count()
 
-        return HttpResponse(status=204)
+        return JsonResponse({'followers_count':followers_count,
+                             'following_count':following_count,
+                            }, safe=False)
 
 
 @login_required

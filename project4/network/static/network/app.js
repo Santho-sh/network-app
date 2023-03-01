@@ -138,6 +138,8 @@ function view_follow(type) {
 
 function view_profile(id) {
 
+    id=2
+
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'block';
     document.querySelector('#followers').style.display = 'none';
@@ -180,12 +182,16 @@ function view_profile(id) {
                             action: 'unfollow'
                         })
                     })
+                    .then(response => response.json())
+                    .then(updated_data => {
+                        followers.innerHTML = `<b>Followers:</b> ${updated_data.followers_count}`;
+                        following.innerHTML = `<b>Following:</b> ${updated_data.following_count}`;
+                    });
 
                     button.classList.remove('follow_button');
                     button.classList.add('unfollow_button');
                     button.textContent = 'Follow';
                     data.follow = false;
-                    location.reload()
 
                 } else {
 
@@ -195,12 +201,16 @@ function view_profile(id) {
                             action: 'follow'
                         })
                     })
+                    .then(response => response.json())
+                    .then(updated_data => {
+                        followers.innerHTML = `<b>Followers:</b> ${updated_data.followers_count}`;
+                        following.innerHTML = `<b>Following:</b> ${updated_data.following_count}`;
+                    });
 
                     button.classList.remove('unfollow_button');
                     button.classList.add('follow_button');
                     button.textContent = 'Unfollow';
                     data.follow = true;
-                    location.reload()
                 }
             });
 
