@@ -65,7 +65,18 @@ def profile(request):
 
 
 def profile_followers(request):
-    pass
+    profile = Profile.objects.get(user=request.user)
+    followers = profile.followers.all()
+
+    all = []
+    for follower in followers:
+        user = {
+            'id':follower.id,
+            'name':follower.username
+        }
+        all.append(user)
+    
+    return JsonResponse(all, safe=False)
 
 
 def login_view(request):

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector('.all-posts').addEventListener('click', () => view_post('all'));
-    document.querySelector('.following').addEventListener('click', () => view_following());
+    document.querySelector('.following').addEventListener('click', () => view_follow('following'));
     document.querySelector('.profile').addEventListener('click', () => view_profile());
     document.querySelector('#create-post').addEventListener('submit', create_post);
 
@@ -102,7 +102,7 @@ function view_post(type) {
 }
 
 
-function view_following() {
+function view_follow(type) {
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#followers').style.display = 'block';
@@ -110,6 +110,20 @@ function view_following() {
     const heading = document.querySelector('.page-heading');
     heading.innerHTML = 'Following';
 
+    const followers = document.querySelector('#followers')
+    followers.innerHTML = '';
+
+    fetch(`/profile/followers`)
+    .then(response => response.json())
+    .then(users => {
+        users.forEach(user => {
+            const follow = document.createElement('p');
+            follow.classList.add('follow');
+            follow.innerHTML = user.name;
+
+            followers.appendChild(follow);
+        })
+    })
 }
 
 
