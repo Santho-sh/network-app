@@ -134,12 +134,6 @@ function view_follow(type) {
     })
 }
 
-function follow(id) {
-    console.log(id);
-}
-function unfollow(id) {
-    console.log(id);
-}
 
 
 function view_profile(id) {
