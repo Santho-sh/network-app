@@ -53,6 +53,7 @@ def get_posts(request, required):
     
     return JsonResponse(serialized_posts, safe=False)
 
+
 @csrf_exempt
 @login_required
 def profile(request, id):

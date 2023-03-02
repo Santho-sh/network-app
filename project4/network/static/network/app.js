@@ -79,14 +79,25 @@ function view_post(type) {
             timestamp.classList.add('post-timestamp');
             timestamp.innerHTML = post.timestamp;
 
-            const likes = document.createElement('p');
+            const likes = document.createElement('div');
             likes.classList.add('post-likes');
+
+            const like_icon = document.createElement('a');
+            like_icon.classList.add('like-icon');
+
+            const like_count = document.createElement('p');
+            like_count.classList.add('like-count');
+            like_count.innerHTML = post.likes;
+
             if (post.liked === true) {
-                likes.innerHTML = `Liked ${post.likes}`;
+                like_icon.innerHTML =  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 47.5 47.5"><defs><clipPath id="a"><path d="M0 38h38V0H0v38Z"/></clipPath></defs><g clip-path="url(#a)" transform="matrix(1.25 0 0 -1.25 0 47.5)"><path fill="#be1931" d="M36.885 25.166c0 5.45-4.418 9.868-9.867 9.868-3.308 0-6.227-1.633-8.018-4.129-1.79 2.496-4.71 4.129-8.017 4.129-5.45 0-9.868-4.418-9.868-9.868 0-.772.098-1.52.266-2.241C2.752 14.413 12.216 5.431 19 2.965c6.783 2.466 16.249 11.448 17.617 19.96.17.721.268 1.469.268 2.241"/></g></svg>';
             }
             else {
-                likes.innerHTML = `NotLiked ${post.likes}`;
+                like_icon.innerHTML =  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 47.5 47.5"><defs><clipPath id="a"><path d="M0 38h38V0H0v38Z"/></clipPath></defs><g clip-path="url(#a)" transform="matrix(1.25 0 0 -1.25 0 47.5)"><path fill="#808080" d="M36.885 25.166c0 5.45-4.418 9.868-9.867 9.868-3.308 0-6.227-1.633-8.018-4.129-1.79 2.496-4.71 4.129-8.017 4.129-5.45 0-9.868-4.418-9.868-9.868 0-.772.098-1.52.266-2.241C2.752 14.413 12.216 5.431 19 2.965c6.783 2.466 16.249 11.448 17.617 19.96.17.721.268 1.469.268 2.241"/></g></svg>';
             }
+
+            likes.appendChild(like_icon);
+            likes.appendChild(like_count);
 
 
             // TODO
@@ -137,8 +148,6 @@ function view_follow(type) {
 
 
 function view_profile(id) {
-
-    id=2
 
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'block';

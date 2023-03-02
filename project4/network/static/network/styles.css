@@ -80,9 +80,18 @@
 }
 
 .post-timestamp,
-.post-likes,
-.post-comment {
+.post-comment,
+.like-count {
     color: grey;
+}
+
+.post-likes {
+    display: flex;
+    gap: 5px;
+}
+
+.like-icon {
+    width: 20px;
 }
 
 /* Profile page */
