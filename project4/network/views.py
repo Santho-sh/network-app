@@ -11,11 +11,13 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User, Profile, Post, Comment
 
 
+
 def index(request):
     if request.user.is_authenticated:
         return render(request, "network/index.html")
     else:
         return redirect('/login')
+    
     
     
 @csrf_exempt
@@ -30,6 +32,7 @@ def create_post(request):
     post.save()
 
     return JsonResponse({"message": "Post created successfully."}, status=201)
+
 
 
 @csrf_exempt
@@ -52,6 +55,46 @@ def get_posts(request, required):
             serialized_posts.append(serialized_post)
     
     return JsonResponse(serialized_posts, safe=False)
+
+
+
+@csrf_exempt
+@login_required
+def edit_post(request, id):
+    print('hello')
+    try:
+        post = Post.objects.get(pk=id)
+    except Profile.DoesNotExist:
+        return JsonResponse({"error": "Post not found."}, status=404)
+    
+    if request.method == "PUT":
+        
+        data = json.loads(request.body)
+        
+        
+        if data.get("liking") is not None:
+            if data['liking'] == 'like':
+                post.likes.add(request.user)
+            elif data['liking'] == 'dislike':
+                post.likes.remove(request.user)
+                
+            likes = post.likes.count()
+            
+            return JsonResponse({
+                'like_count':likes,
+            }, safe=False)
+            
+        elif data.get("edit") is not None:
+            post.content = data['edit']
+            post.save()
+            return JsonResponse({'message': 'Post updated successfully'}, status=200)
+        
+        elif data.get("comment") is not None:
+            pass
+        
+        else:
+            return JsonResponse({"error": "Invalid request."}, status=400)
+        
 
 
 @csrf_exempt
@@ -101,6 +144,7 @@ def profile(request, id):
                             }, safe=False)
 
 
+
 @login_required
 def profile_follows(request, users):
     profile = Profile.objects.get(user=request.user)
@@ -120,6 +164,7 @@ def profile_follows(request, users):
         all.append(user)
     
     return JsonResponse(all, safe=False)
+
 
 
 def login_view(request):
@@ -142,9 +187,11 @@ def login_view(request):
         return render(request, "network/login.html")
 
 
+
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
+
 
 
 def register(request):

@@ -103,13 +103,37 @@ function view_post(type) {
             likes.appendChild(like_icon);
             likes.appendChild(like_count);
 
-
             like_icon.addEventListener('click', () => {
                 if (post.liked === true){
+                    
+                    fetch(`/postEdit/${post.id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            liking:'dislike'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(new_data => {
+                        like_count.innerHTML = new_data.like_count;
+                    })
+                    
                     like_icon.innerHTML = '';
                     like_icon.innerHTML = grey_heart;
                     post.liked = false;
+
                 } else {
+                    
+                    fetch(`/postEdit/${post.id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            liking:'like'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(new_data => {
+                        like_count.innerHTML = new_data.like_count;
+                    })
+                    
                     like_icon.innerHTML = '';
                     like_icon.innerHTML = red_heart;
                     post.liked = true;
