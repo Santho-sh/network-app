@@ -26,7 +26,6 @@ function create_post() {
     })
     .then(response => response.json())
     .then(result => {
-        console.log(result);
         view_post('all');
     });
 }
@@ -264,7 +263,7 @@ function view_profile(id) {
                 }
             });
 
-            view_post('profile');
         }
+        view_post('profile');
     })
 }
