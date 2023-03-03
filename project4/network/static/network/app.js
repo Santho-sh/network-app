@@ -190,7 +190,10 @@ function view_post(type) {
             post_div.appendChild(likes);
             post_div.appendChild(comment);
 
-                        
+            author.addEventListener('click', () => {
+                view_profile(post.author_id);
+            });
+            
             edit.addEventListener('click', () => {
                 new_post(post.id, post.content);
             });
