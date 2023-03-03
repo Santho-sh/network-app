@@ -103,10 +103,6 @@ function view_post(type) {
             likes.appendChild(like_icon);
             likes.appendChild(like_count);
 
-            // Edit post when cliked
-            edit.addEventListener('click', edit_post(post.id));
-
-            // Like Dislike function
             like_icon.addEventListener('click', () => {
                 if (post.liked === true){
                     

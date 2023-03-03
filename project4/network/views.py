@@ -61,6 +61,7 @@ def get_posts(request, required):
 @csrf_exempt
 @login_required
 def edit_post(request, id):
+    print('hello')
     try:
         post = Post.objects.get(pk=id)
     except Profile.DoesNotExist:
