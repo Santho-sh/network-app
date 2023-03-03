@@ -12,7 +12,7 @@ urlpatterns = [
     # API Routes
     path("posts", views.create_post, name="create"),
     path("postEdit/<int:id>", views.edit_post, name = "edit_post"),
-    path("posts/<str:required>", views.get_posts, name = "posts"),
+    path("posts/<int:user_id>", views.get_posts, name = "posts"),
 
     path("profile/<int:id>", views.profile, name = "profile"),
     path("profile/<str:users>", views.profile_follows, name="follows"),

@@ -3,13 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const user_id = JSON.parse(document.getElementById('user_id').textContent);
 
     // Actions
-    document.querySelector('.all-posts').addEventListener('click', () => view_post('all'));
+    document.querySelector('.all-posts').addEventListener('click', () => view_posts());
     document.querySelector('.new-post').addEventListener('click', () => new_post());
     document.querySelector('.following').addEventListener('click', () => view_follow('following'));
     document.querySelector('.profile').addEventListener('click', () => view_profile(user_id));
 
     // By default, load the All Posts
-    view_post('all');
+    view_posts();
 });
 
 
@@ -41,7 +41,7 @@ function new_post(id='new', old_content='') {
             })
             .then(response => response.json())
             .then(result => {
-                view_post('all');
+                view_posts();
             })
         });
     } else {
@@ -59,19 +59,19 @@ function new_post(id='new', old_content='') {
                     edit:content
                 })
             });
-            view_post('all');
+            view_posts();
         })
     }       
 }
 
 
-function view_post(type) {
+function view_posts(id=0) {
 
     // type == all or profile
 
     let all_posts = null
 
-    if (type === 'all'){
+    if (id === 0){
 
         document.querySelector('#posts').style.display = 'block';
         document.querySelector('#profile').style.display = 'none';
@@ -83,12 +83,12 @@ function view_post(type) {
 
         all_posts = document.querySelector('#posts');
 
-    } else if (type === 'profile') {
+    } else {
         all_posts = document.querySelector('#profile-posts');
         all_posts.innerHTML='';
     }
 
-    fetch(`/posts/${type}`)
+    fetch(`/posts/${id}`)
     .then(response => response.json())
     .then(posts => { 
         posts.forEach(post => {
@@ -311,6 +311,6 @@ function view_profile(id) {
             });
 
         }
-        view_post('profile');
+        view_posts(id);
     })
 }

@@ -40,14 +40,18 @@ def create_post(request):
 
 @csrf_exempt
 @login_required
-def get_posts(request, required):
-    if required == 'all':
+def get_posts(request, user_id):
+    if user_id == 0:
         posts = Post.objects.all()
-    elif required == 'profile':
-        posts = Post.objects.filter(author=request.user)
     else:
-        return JsonResponse({"error": "Invalid Request."}, status=400)
-    
+        try:
+            author = User.objects.get(pk=user_id)
+        except:
+            return JsonResponse({"error": "Invalid User Id."}, status=400)
+        
+        posts = Post.objects.filter(author=author)
+
+
     posts = posts.order_by("-timestamp").all()
     
     serialized_posts = []
