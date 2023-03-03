@@ -32,7 +32,8 @@
 }
 
 .following,
-.profile {
+.profile,
+.new-post {
     cursor: pointer;
 }
 
@@ -92,6 +93,11 @@
 
 .like-icon {
     width: 20px;
+    cursor: pointer;
+}
+
+.post-edit {
+    color: orange !important;
     cursor: pointer;
 }
 

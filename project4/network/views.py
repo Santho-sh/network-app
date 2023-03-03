@@ -56,7 +56,11 @@ def get_posts(request, required):
             serialized_post = post.serialize()
             serialized_post['liked'] = post.liked(request.user)
             serialized_posts.append(serialized_post)
-    
+            if request.user == post.author:
+                serialized_post['can_edit'] = True
+            else:
+                serialized_post['can_edit'] = False
+
     return JsonResponse(serialized_posts, safe=False)
 
 

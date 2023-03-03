@@ -4,30 +4,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Actions
     document.querySelector('.all-posts').addEventListener('click', () => view_post('all'));
+    document.querySelector('.new-post').addEventListener('click', () => new_post());
     document.querySelector('.following').addEventListener('click', () => view_follow('following'));
     document.querySelector('.profile').addEventListener('click', () => view_profile(user_id));
-    document.querySelector('#create-post').addEventListener('submit', create_post);
 
     // By default, load the All Posts
     view_post('all');
 });
 
 
+function new_post(id='new', content='') {
+    document.querySelector('#posts').style.display = 'none';
+    document.querySelector('#profile').style.display = 'none';
+    document.querySelector('#new-post').style.display = 'block';
+    document.querySelector('#followers').style.display = 'none';
 
-function create_post() {
+    const heading = document.querySelector('.page-heading');
+    
 
-    let content = document.querySelector('.post-content').value;
+    document.querySelector('.post-content-new').value = content;
 
-    fetch('/posts', {
-        method: 'POST',
-        body: JSON.stringify({
-          content: content,
+    if (id == 'new'){
+
+        heading.innerHTML = 'New Post';
+        document.querySelector('.post-button').value = 'Post';
+
+        document.querySelector('#create-post').addEventListener('submit', ()=> {
+
+            let content = document.querySelector('.post-content-new').value;
+
+            fetch('/posts', {
+                method: 'POST',
+                body: JSON.stringify({  
+                content: content,
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                view_post('all');
+            })
+
+            view_post('all');
+        });
+    } else {
+
+        heading.innerHTML = 'Edit Post';
+        document.querySelector('.post-button').value = 'Save';
+
+        document.querySelector('#create-post').addEventListener('submit',() => {
+
+            let content = document.querySelector('.post-content').value;
+
+            console.log(content, id);
+            
         })
-    })
-    .then(response => response.json())
-    .then(result => {
-        view_post('all');
-    });
+    }
+        
 }
 
 
@@ -41,6 +73,7 @@ function view_post(type) {
 
         document.querySelector('#posts').style.display = 'block';
         document.querySelector('#profile').style.display = 'none';
+        document.querySelector('#new-post').style.display = 'none';
         document.querySelector('#followers').style.display = 'none';
 
         const heading = document.querySelector('.page-heading');
@@ -66,9 +99,11 @@ function view_post(type) {
             author.innerHTML = post.author;
 
             const edit = document.createElement('a');
-            edit.innerHTML = 'Edit';
-            edit.href = '#';
-            edit.classList.add('post-edit');
+            
+            if (post.can_edit){
+                edit.innerHTML = 'Edit';
+                edit.classList.add('post-edit');
+            }
 
             const content = document.createElement('p');
             content.classList.add('post-content');
@@ -139,18 +174,24 @@ function view_post(type) {
                 }
             })
 
-
+            
             // TODO
             const comment = document.createElement('p');
             comment.classList.add('post-comment');
             comment.innerHTML = 'comment';
 
+            
             post_div.appendChild(author);
             post_div.appendChild(edit);
             post_div.appendChild(content);
             post_div.appendChild(timestamp);
             post_div.appendChild(likes);
             post_div.appendChild(comment);
+
+                        
+            edit.addEventListener('click', () => {
+                new_post(post.id, post.content);
+            });
 
             all_posts.appendChild(post_div);
         })
@@ -164,6 +205,7 @@ function view_follow(type) {
 
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'none';
+    document.querySelector('#new-post').style.display = 'none';
     document.querySelector('#followers').style.display = 'block';
 
     const heading = document.querySelector('.page-heading');
@@ -186,11 +228,11 @@ function view_follow(type) {
 }
 
 
-
 function view_profile(id) {
 
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'block';
+    document.querySelector('#new-post').style.display = 'none';
     document.querySelector('#followers').style.display = 'none';
 
     // current user id
