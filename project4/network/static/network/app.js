@@ -17,7 +17,7 @@ function new_post(id='new', old_content='') {
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#new-post').style.display = 'block';
-    document.querySelector('#followers').style.display = 'none';
+    document.querySelector('#follows').style.display = 'none';
 
     const heading = document.querySelector('.page-heading');
     
@@ -76,7 +76,7 @@ function view_posts(id=0) {
         document.querySelector('#posts').style.display = 'block';
         document.querySelector('#profile').style.display = 'none';
         document.querySelector('#new-post').style.display = 'none';
-        document.querySelector('#followers').style.display = 'none';
+        document.querySelector('#follows').style.display = 'none';
 
         const heading = document.querySelector('.page-heading');
         heading.innerHTML = 'All Posts';
@@ -211,13 +211,19 @@ function view_follow(type) {
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#new-post').style.display = 'none';
-    document.querySelector('#followers').style.display = 'block';
+    document.querySelector('#follows').style.display = 'block';
 
     const heading = document.querySelector('.page-heading');
-    heading.innerHTML = 'Following';
 
-    const followers = document.querySelector('#followers')
-    followers.innerHTML = '';
+    if (type == 'following') {
+        heading.innerHTML = 'Following';
+    }
+    else if (type == 'followers') {
+        heading.innerHTML = 'Followers';
+    }
+
+    const follows = document.querySelector('#follows')
+    follows.innerHTML = '';
 
     fetch(`/profile/${type}`)
     .then(response => response.json())
@@ -227,7 +233,11 @@ function view_follow(type) {
             follow.classList.add('follow');
             follow.innerHTML = user.name;
 
-            followers.appendChild(follow);
+            follows.appendChild(follow);
+
+            follow.addEventListener('click', () => {
+                view_profile(user.id)
+            })
         })
     })
 }
@@ -238,7 +248,7 @@ function view_profile(id) {
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'block';
     document.querySelector('#new-post').style.display = 'none';
-    document.querySelector('#followers').style.display = 'none';
+    document.querySelector('#follows').style.display = 'none';
 
     // current user id
     const user_id = JSON.parse(document.getElementById('user_id').textContent);
@@ -308,9 +318,19 @@ function view_profile(id) {
                     button.textContent = 'Unfollow';
                     data.follow = true;
                 }
+                
+            });   
+        } else {
+
+            followers.addEventListener('click', () => {
+                view_follow('followers');
             });
 
+            following.addEventListener('click', () => {
+                view_follow('following');
+            });
         }
+
         view_posts(id);
     })
 }

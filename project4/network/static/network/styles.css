@@ -81,6 +81,10 @@
     cursor: pointer;
 }
 
+.post-author:hover {
+    color: gray;
+}
+
 .post-timestamp,
 .post-comment,
 .like-count {
@@ -112,4 +116,19 @@
 
 .profile-button {
     margin-top: 1rem;
+}
+
+.profile-following,
+.profile-followers,
+.follow {
+    cursor: pointer;
+}
+.profile-following:hover {
+    color: gray;
+}
+.profile-followers:hover {
+    color: gray;
+}
+.follow:hover {
+    color: gray;
 }
