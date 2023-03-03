@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-function new_post(id='new', content='') {
+function new_post(id='new', old_content='') {
     document.querySelector('#posts').style.display = 'none';
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#new-post').style.display = 'block';
@@ -22,7 +22,7 @@ function new_post(id='new', content='') {
     const heading = document.querySelector('.page-heading');
     
 
-    document.querySelector('.post-content-new').value = content;
+    document.querySelector('.post-content-new').value = old_content;
 
     if (id == 'new'){
 
@@ -31,7 +31,7 @@ function new_post(id='new', content='') {
 
         document.querySelector('#create-post').addEventListener('submit', ()=> {
 
-            let content = document.querySelector('.post-content-new').value;
+            const content = document.querySelector('.post-content-new').value;
 
             fetch('/posts', {
                 method: 'POST',
@@ -43,8 +43,6 @@ function new_post(id='new', content='') {
             .then(result => {
                 view_post('all');
             })
-
-            view_post('all');
         });
     } else {
 
@@ -53,13 +51,17 @@ function new_post(id='new', content='') {
 
         document.querySelector('#create-post').addEventListener('submit',() => {
 
-            let content = document.querySelector('.post-content').value;
+            const content = document.querySelector('.post-content-new').value;
 
-            console.log(content, id);
-            
+            fetch(`/postEdit/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    edit:content
+                })
+            });
+            view_post('all');
         })
-    }
-        
+    }       
 }
 
 

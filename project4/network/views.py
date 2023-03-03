@@ -77,7 +77,7 @@ def edit_post(request, id):
         
         data = json.loads(request.body)
         
-        
+        # Like or Dislike Post
         if data.get("liking") is not None:
             if data['liking'] == 'like':
                 post.likes.add(request.user)
@@ -90,11 +90,18 @@ def edit_post(request, id):
                 'like_count':likes,
             }, safe=False)
             
+        # Edit Post
         elif data.get("edit") is not None:
-            post.content = data['edit']
-            post.save()
-            return JsonResponse({'message': 'Post updated successfully'}, status=200)
+            
+            if post.author == request.user:
+                post.content = data['edit']
+                post.save()
+                return JsonResponse({'message': 'Post updated successfully'}, status=200)
+            
+            else:
+                return JsonResponse({'error': 'Invalid edit request'}, status=400)
         
+        # Add comment to post
         elif data.get("comment") is not None:
             pass
         
