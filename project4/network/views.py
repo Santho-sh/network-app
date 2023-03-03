@@ -27,7 +27,10 @@ def create_post(request):
         return JsonResponse({"error": "POST request required."}, status=400)
 
     data = json.loads(request.body)
-    content = data.get("content", "")
+    content = str(data.get("content", "")).strip()
+    if content == '':
+        return JsonResponse({"error": "content required."}, status=400)
+    
     post = Post.objects.create(author=request.user, content=content)
     post.save()
 
