@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.views.generic import ListView
 
 
 class User(AbstractUser):
@@ -30,6 +31,10 @@ class Post(models.Model):
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
             "likes": self.likes.count(),
         }
+
+class PostListView(ListView):
+    paginate_by = 10
+    model = Post
 
 
 class Profile(models.Model):

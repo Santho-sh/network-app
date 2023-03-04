@@ -90,9 +90,9 @@ function view_posts(id=0) {
 
     fetch(`/posts/${id}`)
     .then(response => response.json())
-    .then(posts => { 
-        posts.forEach(post => {
-            
+    .then(data => { 
+        data.posts.forEach(post => {
+
             const post_div = document.createElement('div');
             post_div.classList.add('post');
 
@@ -101,7 +101,7 @@ function view_posts(id=0) {
             author.innerHTML = post.author;
 
             const edit = document.createElement('a');
-            
+
             if (post.can_edit){
                 edit.innerHTML = 'Edit';
                 edit.classList.add('post-edit');
@@ -200,6 +200,8 @@ function view_posts(id=0) {
 
             all_posts.appendChild(post_div);
         })
+        console.log(data.no_pages);
+        console.log(data.cur_page);
     })
 }
 
@@ -222,6 +224,7 @@ function view_follow(type, id) {
     fetch(`/profile/${type}/${id}`)
     .then(response => response.json())
     .then(users => {
+        follows.innerHTML = '';
         users.forEach(user => {
 
             if(id === user_id){
@@ -243,17 +246,14 @@ function view_follow(type, id) {
             const follow = document.createElement('p');
             follow.classList.add('follow');
             follow.innerHTML = user.name;
-
-            follows.innerHTML = '';
             follows.appendChild(follow);
 
             follow.addEventListener('click', () => {
-                view_profile(user.id)
+                view_profile(user.id);
             })
         })
     })
 }
-
 
 
 function view_profile(id) {

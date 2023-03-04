@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 
 from .models import User, Profile, Post, Comment
 
@@ -40,22 +41,26 @@ def create_post(request):
 
 @csrf_exempt
 @login_required
-def get_posts(request, user_id):
+def get_posts(request, user_id, page=1):
     if user_id == 0:
-        posts = Post.objects.all()
+        posts_all = Post.objects.all()
     else:
         try:
             author = User.objects.get(pk=user_id)
         except:
             return JsonResponse({"error": "Invalid User Id."}, status=400)
         
-        posts = Post.objects.filter(author=author)
+        posts_all = Post.objects.filter(author=author)
 
+    posts_all = posts_all.order_by("-timestamp")
+    posts = Paginator(posts_all, 10)
+    # Show 10 contacts per page.
+    no_pages = posts.num_pages
 
-    posts = posts.order_by("-timestamp").all()
-    
+    page_posts = posts.get_page(page)
+
     serialized_posts = []
-    for post in posts:
+    for post in page_posts:
         if post is not None:
             serialized_post = post.serialize()
             serialized_post['liked'] = post.liked(request.user)
@@ -65,8 +70,9 @@ def get_posts(request, user_id):
             else:
                 serialized_post['can_edit'] = False
 
-    return JsonResponse(serialized_posts, safe=False)
-
+    return JsonResponse({'posts':serialized_posts,
+                         'no_pages':no_pages,
+                         'cur_page':page}, safe=False)
 
 
 @csrf_exempt
@@ -111,8 +117,7 @@ def edit_post(request, id):
         
         else:
             return JsonResponse({"error": "Invalid request."}, status=400)
-        
-
+    
 
 @csrf_exempt
 @login_required
@@ -161,7 +166,6 @@ def profile(request, id):
                             }, safe=False)
 
 
-
 @login_required
 def profile_follows(request, users, id):
     try: 
@@ -189,7 +193,6 @@ def profile_follows(request, users, id):
     return JsonResponse(all, safe=False)
 
 
-
 def login_view(request):
     if request.method == "POST":
 
@@ -210,11 +213,9 @@ def login_view(request):
         return render(request, "network/login.html")
 
 
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
 
 
 def register(request):
