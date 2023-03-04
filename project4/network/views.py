@@ -163,8 +163,13 @@ def profile(request, id):
 
 
 @login_required
-def profile_follows(request, users):
-    profile = Profile.objects.get(user=request.user)
+def profile_follows(request, users, id):
+    try: 
+        main_user = User.objects.get(pk=id)
+    except:
+        return JsonResponse({"error": "Invalid Request."}, status=400)
+        
+    profile = Profile.objects.get(user=main_user)
     if users == 'followers':
         users = profile.followers.all()
     elif users == 'following':
@@ -176,10 +181,11 @@ def profile_follows(request, users):
     for user in users:
         user = {
             'id':user.id,
-            'name':user.username
+            'name':user.username,
+            'main_user':main_user.username
         }
         all.append(user)
-    
+
     return JsonResponse(all, safe=False)
 
 

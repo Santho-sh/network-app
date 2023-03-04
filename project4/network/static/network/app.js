@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Actions
     document.querySelector('.all-posts').addEventListener('click', () => view_posts());
     document.querySelector('.new-post').addEventListener('click', () => new_post());
-    document.querySelector('.following').addEventListener('click', () => view_follow('following'));
+    document.querySelector('.following').addEventListener('click', () => view_follow('following', user_id));
     document.querySelector('.profile').addEventListener('click', () => view_profile(user_id));
 
     // By default, load the All Posts
@@ -204,7 +204,9 @@ function view_posts(id=0) {
 }
 
 
-function view_follow(type) {
+function view_follow(type, id) {
+
+    const user_id = JSON.parse(document.getElementById('user_id').textContent);
 
     // type = followers or following
 
@@ -215,24 +217,34 @@ function view_follow(type) {
 
     const heading = document.querySelector('.page-heading');
 
-    if (type == 'following') {
-        heading.innerHTML = 'Following';
-    }
-    else if (type == 'followers') {
-        heading.innerHTML = 'Followers';
-    }
+    const follows = document.querySelector('#follows');
 
-    const follows = document.querySelector('#follows')
-    follows.innerHTML = '';
-
-    fetch(`/profile/${type}`)
+    fetch(`/profile/${type}/${id}`)
     .then(response => response.json())
     .then(users => {
         users.forEach(user => {
+
+            if(id === user_id){
+                if (type === 'following') {
+                    heading.innerHTML = 'Following';
+                }
+                else if (type === 'followers') {
+                    heading.innerHTML = 'Followers';
+                }
+            } else { 
+                if (type === 'following') {
+                    heading.innerHTML = `${user.main_user}'s Following`;
+                }
+                else if (type === 'followers') {
+                    heading.innerHTML = `${user.main_user}'s Followers`;
+                }
+            }
+
             const follow = document.createElement('p');
             follow.classList.add('follow');
             follow.innerHTML = user.name;
 
+            follows.innerHTML = '';
             follows.appendChild(follow);
 
             follow.addEventListener('click', () => {
@@ -241,6 +253,7 @@ function view_follow(type) {
         })
     })
 }
+
 
 
 function view_profile(id) {
@@ -318,18 +331,16 @@ function view_profile(id) {
                     button.textContent = 'Unfollow';
                     data.follow = true;
                 }
-                
             });   
-        } else {
-
-            followers.addEventListener('click', () => {
-                view_follow('followers');
-            });
-
-            following.addEventListener('click', () => {
-                view_follow('following');
-            });
         }
+
+        followers.addEventListener('click', () => {
+            view_follow('followers', id);
+        });
+
+        following.addEventListener('click', () => {
+            view_follow('following', id);
+        });
 
         view_posts(id);
     })
