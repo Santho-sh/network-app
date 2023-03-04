@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function new_post(id='new', old_content='') {
-    document.querySelector('#posts').style.display = 'none';
+    document.querySelector('#posts-page').style.display = 'none';
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#new-post').style.display = 'block';
     document.querySelector('#follows').style.display = 'none';
@@ -65,15 +65,15 @@ function new_post(id='new', old_content='') {
 }
 
 
-function view_posts(id=0) {
+function view_posts(id=0, page=1) {
 
-    // type == all or profile
+    // id == 0 : all posts
 
     let all_posts = null
 
     if (id === 0){
 
-        document.querySelector('#posts').style.display = 'block';
+        document.querySelector('#posts-page').style.display = 'block';
         document.querySelector('#profile').style.display = 'none';
         document.querySelector('#new-post').style.display = 'none';
         document.querySelector('#follows').style.display = 'none';
@@ -85,10 +85,10 @@ function view_posts(id=0) {
 
     } else {
         all_posts = document.querySelector('#profile-posts');
-        all_posts.innerHTML='';
     }
+    all_posts.innerHTML='';
 
-    fetch(`/posts/${id}`)
+    fetch(`/posts/${id}/${page}`)
     .then(response => response.json())
     .then(data => { 
         data.posts.forEach(post => {
@@ -200,8 +200,61 @@ function view_posts(id=0) {
 
             all_posts.appendChild(post_div);
         })
-        console.log(data.no_pages);
-        console.log(data.cur_page);
+
+        //Pages
+
+        const page_change = document.querySelector('.page-change');
+
+        page_change.innerHTML = '';
+
+        const previous = document.createElement('li');
+        previous.classList.add('previous', 'page-item');
+        previous.innerHTML = '<a class="page-link" href="#">Previous</a>';
+
+        if (data.cur_page == 1){
+            previous.classList.add('disabled')
+        }
+        page_change.appendChild(previous);
+
+
+        if (data.no_pages > 0) {
+            const nav = document.createElement('nav');
+            nav.setAttribute('aria-label', 'Page navigation example');
+
+            for(let i=1; i <= data.no_pages; i++) {
+                let li = document.createElement('li');
+                li.classList.add('page-item');
+                if (i === data.cur_page){
+                    li.classList.add('active');
+                    li.setAttribute('aria-current',"page");
+                }
+
+                li.innerHTML = `<a class="page-link" href="#">${i}</a>`
+
+                page_change.appendChild(li);
+            }
+
+            const next = document.createElement('li');
+            next.classList.add('page-item', 'next');
+            next.innerHTML = '<a class="page-link" href="#">Next</a>';
+            if (data.cur_page == data.no_pages){
+                next.classList.add('disabled');
+            }
+            page_change.appendChild(next);
+            previous.addEventListener('click', () => {
+                let prev = data.cur_page - 1
+                if(prev > 0){
+                    view_posts(id, prev);
+                };
+            })
+    
+            next.addEventListener('click', () => {
+                let nxt = data.cur_page + 1
+                if(nxt <= data.no_pages){
+                    view_posts(id, nxt);
+                };
+            })
+        }
     })
 }
 
@@ -212,7 +265,7 @@ function view_follow(type, id) {
 
     // type = followers or following
 
-    document.querySelector('#posts').style.display = 'none';
+    document.querySelector('#posts-page').style.display = 'none';
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#new-post').style.display = 'none';
     document.querySelector('#follows').style.display = 'block';
@@ -258,7 +311,7 @@ function view_follow(type, id) {
 
 function view_profile(id) {
 
-    document.querySelector('#posts').style.display = 'none';
+    document.querySelector('#posts-page').style.display = 'none';
     document.querySelector('#profile').style.display = 'block';
     document.querySelector('#new-post').style.display = 'none';
     document.querySelector('#follows').style.display = 'none';
