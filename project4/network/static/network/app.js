@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Actions
     document.querySelector('.all-posts').addEventListener('click', () => view_posts());
     document.querySelector('.new-post').addEventListener('click', () => new_post());
-    document.querySelector('.following').addEventListener('click', () => view_follow('following', user_id));
+    document.querySelector('.following').addEventListener('click', () => view_posts(user_id, 1, 'following'));
     document.querySelector('.profile').addEventListener('click', () => view_profile(user_id));
 
     // By default, load the All Posts
@@ -40,7 +40,7 @@ function new_post(id='new', old_content='') {
                 })
             })
             .then(response => response.json())
-            .then(result => {
+            .then(_ => {
                 view_posts();
             })
         });
@@ -65,13 +65,14 @@ function new_post(id='new', old_content='') {
 }
 
 
-function view_posts(id=0, page=1) {
+function view_posts(id=0, page=1, type='all') {
 
     // id == 0 : all posts
+    // id == -1: following posts
 
     let all_posts = null
 
-    if (id === 0){
+    if (id === 0 || type === 'following'){
 
         document.querySelector('#posts-page').style.display = 'block';
         document.querySelector('#profile').style.display = 'none';
@@ -79,16 +80,22 @@ function view_posts(id=0, page=1) {
         document.querySelector('#follows').style.display = 'none';
 
         const heading = document.querySelector('.page-heading');
-        heading.innerHTML = 'All Posts';
+        
+        if (type === 'following'){
+            heading.innerHTML = 'Following';
+        } else {
+            heading.innerHTML = 'All Posts';
+        }
 
         all_posts = document.querySelector('#posts');
-
-    } else {
+    }
+    
+    else {
         all_posts = document.querySelector('#profile-posts');
     }
     all_posts.innerHTML='';
 
-    fetch(`/posts/${id}/${page}`)
+    fetch(`/posts/${id}/${page}/${type}`)
     .then(response => response.json())
     .then(data => { 
         data.posts.forEach(post => {
@@ -176,19 +183,11 @@ function view_posts(id=0, page=1) {
                 }
             })
 
-            
-            // TODO
-            const comment = document.createElement('p');
-            comment.classList.add('post-comment');
-            comment.innerHTML = 'comment';
-
-            
             post_div.appendChild(author);
             post_div.appendChild(edit);
             post_div.appendChild(content);
             post_div.appendChild(timestamp);
             post_div.appendChild(likes);
-            post_div.appendChild(comment);
 
             author.addEventListener('click', () => {
                 view_profile(post.author_id);
@@ -202,10 +201,10 @@ function view_posts(id=0, page=1) {
         })
 
         //Pages
-
         const page_change = document.querySelector('.page-change');
-
         page_change.innerHTML = '';
+
+        if (data.no_pages > 1) {
 
         const previous = document.createElement('li');
         previous.classList.add('previous', 'page-item');
@@ -254,6 +253,8 @@ function view_posts(id=0, page=1) {
                     view_posts(id, nxt);
                 };
             })
+        
+            }
         }
     })
 }

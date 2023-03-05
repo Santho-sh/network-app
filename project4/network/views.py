@@ -41,15 +41,22 @@ def create_post(request):
 
 @csrf_exempt
 @login_required
-def get_posts(request, user_id, page=1):
-    if user_id == 0:
+def get_posts(request, user_id, page=1, type='all'):
+    if user_id == 0 and type == 'all':
         posts_all = Post.objects.all()
+        
+    elif type == 'following':
+        
+        following = Profile.objects.get(user=request.user).following.all()
+
+        posts_all = Post.objects.filter(author__in=following)
+
     else:
         try:
             author = User.objects.get(pk=user_id)
         except:
             return JsonResponse({"error": "Invalid User Id."}, status=400)
-        
+
         posts_all = Post.objects.filter(author=author)
 
     posts_all = posts_all.order_by("-timestamp")
@@ -110,11 +117,6 @@ def edit_post(request, id):
             
             else:
                 return JsonResponse({'error': 'Invalid edit request'}, status=400)
-        
-        # Add comment to post
-        elif data.get("comment") is not None:
-            pass
-        
         else:
             return JsonResponse({"error": "Invalid request."}, status=400)
     
