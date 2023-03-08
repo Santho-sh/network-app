@@ -13,55 +13,30 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-function new_post(id='new', old_content='') {
+function new_post() {
     document.querySelector('#posts-page').style.display = 'none';
     document.querySelector('#profile').style.display = 'none';
     document.querySelector('#new-post').style.display = 'block';
     document.querySelector('#follows').style.display = 'none';
 
     const heading = document.querySelector('.page-heading');
-    
 
-    document.querySelector('.post-content-new').value = old_content;
+    heading.innerHTML = 'New Post';
 
-    if (id == 'new'){
+    document.querySelector('#create-post').addEventListener('submit', ()=> {
 
-        heading.innerHTML = 'New Post';
-        document.querySelector('.post-button').value = 'Post';
-
-        document.querySelector('#create-post').addEventListener('submit', ()=> {
-
-            const content = document.querySelector('.post-content-new').value;
-
-            fetch('/posts', {
-                method: 'POST',
-                body: JSON.stringify({  
-                content: content,
-                })
+        const content = document.querySelector('.post-content-new').value;
+        fetch('/posts', {
+            method: 'POST',
+            body: JSON.stringify({  
+            content: content,
             })
-            .then(response => response.json())
-            .then(_ => {
-                view_posts();
-            })
-        });
-    } else {
-
-        heading.innerHTML = 'Post';
-        document.querySelector('.post-button').value = 'Save';
-
-        document.querySelector('#create-post').addEventListener('submit',() => {
-
-            const content = document.querySelector('.post-content-new').value;
-
-            fetch(`/postEdit/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    edit:content
-                })
-            });
+        })
+        .then(response => response.json())
+        .then(_ => {
             view_posts();
         })
-    }       
+    });      
 }
 
 
@@ -196,8 +171,9 @@ function view_posts(id=0, page=1, type='all') {
             author.addEventListener('click', () => {
                 view_profile(post.author_id);
             });
-            
-            edit.addEventListener('click', function() {
+
+            // Edit post 
+            edit_button.addEventListener('click', function() {
                 if (edit_button.getAttribute('data-edit') === 'false') {
                     textarea.style.display = 'block';
                     edit_button.innerHTML = 'Save';
@@ -205,6 +181,15 @@ function view_posts(id=0, page=1, type='all') {
                     edit_button.setAttribute('data-edit', 'true');
                     content.style.display = 'none';
                 } else {
+                    new_content = textarea.value;
+
+                    fetch(`/postEdit/${post.id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            edit:new_content
+                        })
+                    });
+                    content.innerHTML = new_content;
                     content.style.display = 'block';
                     textarea.style.display = 'none';
                     edit_button.innerHTML = 'Edit';

@@ -123,12 +123,23 @@
 .follow {
     cursor: pointer;
 }
+
 .profile-following:hover {
     color: gray;
 }
+
 .profile-followers:hover {
     color: gray;
 }
+
 .follow:hover {
     color: gray;
+}
+
+.edit-text {
+    height: 2rem;
+    width: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 3px;
 }
