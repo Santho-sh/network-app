@@ -46,7 +46,7 @@ function new_post(id='new', old_content='') {
         });
     } else {
 
-        heading.innerHTML = 'Edit Post';
+        heading.innerHTML = 'Post';
         document.querySelector('.post-button').value = 'Save';
 
         document.querySelector('#create-post').addEventListener('submit',() => {
@@ -66,9 +66,6 @@ function new_post(id='new', old_content='') {
 
 
 function view_posts(id=0, page=1, type='all') {
-
-    // id == 0 : all posts
-    // id == -1: following posts
 
     let all_posts = null
 
@@ -107,11 +104,18 @@ function view_posts(id=0, page=1, type='all') {
             author.classList.add('post-author');
             author.innerHTML = post.author;
 
-            const edit = document.createElement('a');
+            const edit = document.createElement('div');
+            edit.classList.add('post-edit');
+            const textarea = document.createElement('textarea');
+            textarea.classList.add('edit-text');
+            const edit_button = document.createElement('a');
+            edit_button.innerHTML = 'Edit';
+            textarea.style.display = 'none';
+            edit_button.setAttribute('data-edit', 'false');
 
             if (post.can_edit){
-                edit.innerHTML = 'Edit';
-                edit.classList.add('post-edit');
+                edit.appendChild(textarea);
+                edit.appendChild(edit_button);
             }
 
             const content = document.createElement('p');
@@ -184,8 +188,8 @@ function view_posts(id=0, page=1, type='all') {
             })
 
             post_div.appendChild(author);
-            post_div.appendChild(edit);
             post_div.appendChild(content);
+            post_div.appendChild(edit);
             post_div.appendChild(timestamp);
             post_div.appendChild(likes);
 
@@ -193,10 +197,21 @@ function view_posts(id=0, page=1, type='all') {
                 view_profile(post.author_id);
             });
             
-            edit.addEventListener('click', () => {
-                new_post(post.id, post.content);
+            edit.addEventListener('click', function() {
+                if (edit_button.getAttribute('data-edit') === 'false') {
+                    textarea.style.display = 'block';
+                    edit_button.innerHTML = 'Save';
+                    textarea.innerText = post.content;
+                    edit_button.setAttribute('data-edit', 'true');
+                    content.style.display = 'none';
+                } else {
+                    content.style.display = 'block';
+                    textarea.style.display = 'none';
+                    edit_button.innerHTML = 'Edit';
+                    edit_button.setAttribute('data-edit', 'false');
+                }
             });
-
+            
             all_posts.appendChild(post_div);
         })
 
